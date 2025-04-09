@@ -1,0 +1,84 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: web3-edu-api
+    ports:
+      - "8003:8003"
+    depends_on:
+      - postgres
+      - redis
+    environment:
+      - TZ=Asia/Ho_Chi_Minh
+      - POSTGRES_HOST=postgres
+      - POSTGRES_PORT=5432
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=123123
+      - POSTGRES_DB=web3_edu_db
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+    volumes:
+      - ./config:/app/config
+      - ./migrations:/app/migrations
+      - ./scripts:/app/scripts
+    networks:
+      - web3-edu-network
+    restart: unless-stopped
+    entrypoint: ["/app/scripts/run-migrations.sh"]
+    command: ["./main"]
+
+  postgres:
+    image: postgres:15-alpine
+    container_name: web3-edu-postgres
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=123123
+      - POSTGRES_DB=web3_edu_db
+      - TZ=Asia/Ho_Chi_Minh
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./migrations:/docker-entrypoint-initdb.d
+    networks:
+      - web3-edu-network
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    container_name: web3-edu-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - web3-edu-network
+    restart: unless-stopped
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: web3-edu-pgadmin
+    ports:
+      - "5050:80"
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=admin@web3edu.com
+      - PGADMIN_DEFAULT_PASSWORD=admin
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+    networks:
+      - web3-edu-network
+    depends_on:
+      - postgres
+    restart: unless-stopped
+
+networks:
+  web3-edu-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
+  redis_data:
+  pgadmin_data:
