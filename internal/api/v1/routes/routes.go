@@ -71,31 +71,31 @@ func RegisterRoutes(router *gin.Engine) {
 		}
 
 		// Course routes
-		// courseHandler := handlers.NewCourseHandler()
-		// courses := v1.Group("/courses")
-		// {
-		//     courses.GET("", courseHandler.List)
-		//     courses.GET("/featured", courseHandler.GetFeatured)
-		//     courses.GET("/:id", courseHandler.Get)
-		//     courses.GET("/:id/lessons", courseHandler.GetLessons)
-		//     courses.GET("/:id/reviews", courseHandler.GetReviews)
-		// }
-		//
-		// // Protected course routes
-		// protectedCourses := protected.Group("/courses")
-		// {
-		//     protectedCourses.POST("/:id/enroll", courseHandler.Enroll)
-		//     protectedCourses.POST("/:id/reviews", courseHandler.AddReview)
-		// }
-		//
-		// // Admin course routes
-		// adminCourses := protected.Group("/admin/courses")
-		// adminCourses.Use(middleware.RoleMiddleware("admin", "instructor"))
-		// {
-		//     adminCourses.POST("", courseHandler.Create)
-		//     adminCourses.PUT("/:id", courseHandler.Update)
-		//     adminCourses.DELETE("/:id", courseHandler.Delete)
-		// }
+		courseHandler := handlers.NewCourseHandler()
+		courses := v1.Group("/courses")
+		{
+			courses.GET("", courseHandler.List)
+			courses.GET("/featured", courseHandler.GetFeatured)
+			courses.GET("/:id", courseHandler.Get)
+			courses.GET("/:id/lessons", courseHandler.GetLessons)
+			// courses.GET("/:id/reviews", courseHandler.GetReviews)
+		}
+
+		// Protected course routes
+		protectedCourses := protected.Group("/courses")
+		{
+			protectedCourses.POST("/:id/enroll", courseHandler.Enroll)
+			// protectedCourses.POST("/:id/reviews", courseHandler.AddReview)
+		}
+
+		// Admin course routes
+		adminCourses := protected.Group("/admin/courses")
+		adminCourses.Use(middleware.RoleMiddleware("admin"))
+		{
+			adminCourses.POST("", courseHandler.Create)
+			adminCourses.PUT("/:id", courseHandler.Update)
+			adminCourses.DELETE("/:id", courseHandler.Delete)
+		}
 
 		// Lesson routes
 		// lessonHandler := handlers.NewLessonHandler()

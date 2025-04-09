@@ -63,7 +63,23 @@ func (r *CourseRepository) List(page, pageSize int) ([]models.Course, int64, err
 	r.db.Model(&models.Course{}).Count(&count)
 
 	offset := (page - 1) * pageSize
-	err := r.db.Preload("Instructor").Offset(offset).Limit(pageSize).Find(&courses).Error
+	err := r.db.Preload("Instructor").Order("created_at DESC").Offset(offset).Limit(pageSize).Find(&courses).Error
+	if err != nil {
+		return nil, 0, err
+	}
+
+	return courses, count, nil
+}
+
+// ListByCategory lists courses by category with pagination
+func (r *CourseRepository) ListByCategory(category string, page, pageSize int) ([]models.Course, int64, error) {
+	var courses []models.Course
+	var count int64
+
+	r.db.Model(&models.Course{}).Where("category = ?", category).Count(&count)
+
+	offset := (page - 1) * pageSize
+	err := r.db.Preload("Instructor").Where("category = ?", category).Order("created_at DESC").Offset(offset).Limit(pageSize).Find(&courses).Error
 	if err != nil {
 		return nil, 0, err
 	}
