@@ -95,14 +95,64 @@ docker-compose up -d
 4. Install dependencies:
 
 ```bash
-go mod download
+make deps
 ```
 
 5. Run the application:
 
 ```bash
-go run cmd/api/main.go
+make run
 ```
+
+### Using the Makefile
+
+The project includes a Makefile to simplify common development tasks:
+
+```bash
+# Build the application
+make build
+
+# Run the application
+make run
+
+# Run tests
+make test
+
+# Run tests with coverage
+make test-coverage
+
+# Run linters
+make lint
+
+# Generate Swagger documentation
+make swagger
+
+# Build Docker image
+make docker-build
+
+# Start all services with Docker Compose
+make docker-compose-up
+
+# Stop all services with Docker Compose
+make docker-compose-down
+
+# Run database migrations
+make migrate
+
+# Run specific migration up
+make migrate-up version=20230101000001
+
+# Run specific migration down
+make migrate-down version=20230101000001
+
+# Download dependencies
+make deps
+
+# Tidy up the go.mod file
+make tidy
+```
+
+Run `make help` to see all available commands.
 
 ## API Endpoints
 
